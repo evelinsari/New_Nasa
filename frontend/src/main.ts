@@ -8,6 +8,7 @@ const NasaResponseSchema = z.object({
   title: z.string(),
   url: z.string()
 })
+
 type Nasa = z.infer<typeof NasaResponseSchema>
 
 const BASE_URL = "https://api.nasa.gov/planetary/apod?"
@@ -26,7 +27,14 @@ const getData = async (selectedDate: string): Promise<Nasa | null>  => {
     }
   })
 
-  return response.data  
+  const result = NasaResponseSchema.safeParse(response.data)
+
+  if (!result.success) {
+    return null
+  }else {
+    return result.data
+  }
+
 }
 //--------------------------render---------------------------
 const renderDetails = (details: Nasa)=> {
